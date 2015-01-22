@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# coverage-incrementer
+#
+
+DIR="$( dirname "${BASH_SOURCE[0]}" )"
+
+adjust() {
+  local report="$*"
+  local project="$(echo "${report/\/target\/coverage-reports\/jacoco.xml/}")"
+  local covered="$(ruby "$DIR"/instruction-coverage-extractor.rb -jacoco "$report")"
+  local rule="$(ruby "$DIR"/instruction-coverage-extractor.rb -pom "$project/pom.xml")"
+  echo "$project rule=$rule vs actual=$covered"
+}
+
+main() {
+  find . -wholename "*/target/coverage-reports/jacoco.xml" | while read report; do
+    adjust "$report"
+  done
+}
+
+main
