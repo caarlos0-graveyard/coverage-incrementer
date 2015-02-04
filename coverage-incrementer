@@ -10,7 +10,7 @@ adjust() {
   local project="$(echo "${report/\/target\/coverage-reports\/jacoco.xml/}")"
   local covered="$(ruby "$DIR"/instruction-coverage-extractor.rb -jacoco "$report")"
   local rule="$(ruby "$DIR"/instruction-coverage-extractor.rb -pom "$project/pom.xml")"
-  echo "$project rule=$rule vs actual=$covered"
+  echo "$project rules={$rule} vs actual={$covered}"
 }
 
 main() {
