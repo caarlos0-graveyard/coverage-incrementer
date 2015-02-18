@@ -6,16 +6,20 @@ class Pom
     @doc.remove_namespaces!
   end
 
-  def instructions
-    @doc.xpath("//coverage.it.rate").text.to_f
+  def line_rate
+    @doc.xpath("//coverage.line.rate").text.to_f
+  end
+
+  def branch_rate
+    @doc.xpath("//coverage.branch.rate").text.to_f
   end
 
   def missed
-    @doc.xpath("//coverage.it.missclasses").text.to_i
+    @doc.xpath("//coverage.missclasses").text.to_i
   end
 
   def to_s
-    "instruction=#{instructions}, missed=#{missed}"
+    "line rate=#{line_rate}, branch rate=#{branch_rate}, missed=#{missed}"
   end
 end
 
@@ -24,8 +28,15 @@ class Jacoco
     @doc = doc
   end
 
-  def instructions
+  def line_rate
     node = @doc.at_xpath('//report/counter[@type="INSTRUCTION"]')
+    missed = node.attributes["missed"].value.to_f
+    covered = node.attributes["covered"].value.to_f
+    (covered / (missed + covered)).round(2)
+  end
+
+  def branch_rate
+    node = @doc.at_xpath('//report/counter[@type="BRANCH"]')
     missed = node.attributes["missed"].value.to_f
     covered = node.attributes["covered"].value.to_f
     (covered / (missed + covered)).round(2)
@@ -37,7 +48,7 @@ class Jacoco
   end
 
   def to_s
-    "instruction=#{instructions}, missed=#{missed}"
+    "line rate=#{line_rate}, branch rate=#{branch_rate}, missed=#{missed}"
   end
 end
 
